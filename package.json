@@ -24,9 +24,7 @@
     "next": "^16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "shapefile": "^0.6.6",
-    "topojson-client": "^3.1.0",
-    "world-atlas": "^2.0.2"
+    "shapefile": "^0.6.6"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
@@ -38,7 +36,6 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/shapefile": "^0.6.4",
-    "@types/topojson-client": "^3.1.5",
     "drizzle-kit": "^0.31.10",
     "eslint": "9.39.4",
     "eslint-plugin-jsx-a11y": "6.10.2",

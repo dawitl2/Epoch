@@ -182,7 +182,7 @@ async function enrichLeader(leader: LeaderRecord) {
   return {
     ...leader,
     extract: summary.extract || leader.extract,
-    imageUrl: secureUrl(summary.originalimage?.source || summary.thumbnail?.source || leader.imageUrl),
+    imageUrl: secureUrl(summary.thumbnail?.source || summary.originalimage?.source || leader.imageUrl),
     articleUrl: summary.content_urls?.desktop?.page || leader.articleUrl,
   };
 }

@@ -1,43 +1,45 @@
 # Epoch
 
-Epoch is a globe-centered history exploration and trivia platform built to make world leaders, empires, wars, and timelines explorable in one interface. The globe stays upright, progressively reveals detail by zoom level, and keeps quiz and history content in a clean panel instead of covering the map.
+Epoch is a production-oriented globe-centered geography and history quiz. A real MapLibre/WebGL globe is backed by imported Natural Earth 1:10m data, while Next.js route handlers deliver geography, countries, quizzes, leaders, alerts, and progress.
 
 ## What it does
 
-- Rotatable MapLibre globe with selectable regions (Africa, Europe, Asia, Middle East, Americas, Oceania)
-- Region highlighting with smooth camera fly-to transitions on selection
-- Scale-aware Natural Earth country borders and continent boundaries
-- Four history modes per region: Leaders, Empires, Wars, and Timeline
-- Trivia quizzes with configurable difficulty and question count
-- Multiple question formats: image identification, country identification, historical fact, war questions, and timeline ordering
-- Per-question answer feedback with a short historical fact on both correct and incorrect answers
-- Results tracking with accuracy, streaks, and mock XP
-- Progress view across regions and modes
+- Upright, draggable MapLibre globe with 257 selectable countries
+- Imported Natural Earth 1:10m countries, rivers, lakes, and populated places
+- Progressive country, capital, city, river, and lake detail by zoom level
+- Flags, countries, capitals, leaders, and state-description quiz modes
+- Choice-based or globe-based answers with immediate feedback
+- Persistent local progress and a cached Wikimedia/Wikidata leader archive
+- Health and geography APIs under `/api/v1`
 
 ## Architecture
 
-The application uses the Next.js App Router and React with TypeScript for the experience layer. MapLibre GL renders the globe and regional geography, with local state managing quiz flow, selected region, and progress. This phase runs entirely on local mock data, with no backend or external API calls.
+The application uses the standard Next.js App Router and React with TypeScript. A repeatable import script downloads and converts official Natural Earth shapefiles to GeoJSON. Next.js serves that generated dataset and deterministic country quizzes locally; leader biographies and live alerts are fetched through server-side providers with persistent caching.
 
 ```text
-Next.js → React state → MapLibre GL → local mock data
+Natural Earth -> import script -> GeoJSON API -> TanStack Query -> MapLibre WebGL globe
 ```
-
-## The system
-
-The global view remains readable while highlighting the selected region and its available history content. At regional zoom, country borders and geographic detail become progressively denser, while the interface below the globe updates to reflect the active region and mode.
 
 ## Technology stack
 
 | Layer | Technology | Role in Epoch |
 | --- | --- | --- |
-| Web application | Next.js, React, TypeScript | Client rendering, routing, layouts, and the interactive history experience |
-| Interface | Tailwind CSS | Responsive visual system, navigation, cards, and quiz UI |
-| Globe and maps | MapLibre GL JS, WebGL globe projection | Upright rotatable 3D Earth, camera animation, zoom, and region picking |
-| Globe atmosphere | MapLibre atmosphere and fog rendering | Horizon depth, atmospheric color, and a readable globe silhouette |
-| Geographic layers | GeoJSON, TopoJSON, Natural Earth, world-atlas | Countries, borders, and region boundaries |
-| Map interaction | MapLibre feature queries and camera controls | Region selection, highlighting, hover previews, and animated fly-to navigation |
-| Client state | Local React state | Selected region, active mode, quiz progress, and results |
-| Mock data | Local TypeScript data files | Regions, historical people, and quiz questions |
+| Web application | Next.js, React, TypeScript | App Router UI and server API routes |
+| Globe | MapLibre GL JS, WebGL globe projection | Upright Earth, camera animation, zoom, hover, and selection |
+| Geographic data | Natural Earth 1:10m, GeoJSON, shapefile | Accurate countries, rivers, lakes, cities, and labels |
+| Client data | TanStack Query | Geography loading, caching, and error states |
+| Quiz content | Natural Earth, Wikidata, Wikimedia | Country facts, flags, leaders, and portraits |
+| Persistence | Server-side JSON store | API cache and quiz progress |
 
-> [!NOTE]
-> Epoch was created as a hands-on project for learning NestJS, OpenAPI/Swagger, interactive WebGL globe interfaces, region-based navigation, and quiz application architecture in Next.js and React.
+## Local development
+
+Run `npm run geography:import` when the Natural Earth source needs to be refreshed, then start the application with `npm run dev`.
+
+Validation commands:
+
+```text
+npm run geography:verify
+npm run typecheck
+npm run lint
+npm run build
+```
