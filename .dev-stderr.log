@@ -8,3 +8,4 @@ Detected multiple renderers concurrently rendering the same context provider. Th
 [2m11:28:25[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mTypeError: Failed to fetch
 [2m11:28:25[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mTypeError: Failed to fetch
 [2m11:28:31[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mcalculateFogMatrix is not supported on globe projection.
+[2m11:30:37[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mcalculateFogMatrix is not supported on globe projection.
