@@ -5,6 +5,7 @@ import type {
   LeadersResponse,
   QuizMode,
   QuizResponse,
+  MapGeography,
 } from "@/src/lib/contracts";
 
 async function readJson<T>(response: Response, fallback: string) {
@@ -42,4 +43,9 @@ export function fetchQuiz(input: {
   });
   return fetch(`/api/quiz?${query}`).then((response) =>
     readJson<QuizResponse>(response, "The live quiz could not be prepared."));
+}
+
+export function fetchGeography(signal?: AbortSignal) {
+  return fetch("/api/v1/map/geography", { signal }).then((response) =>
+    readJson<MapGeography>(response, "Imported Natural Earth geography is unavailable."));
 }

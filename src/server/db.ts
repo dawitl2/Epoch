@@ -1,71 +1,66 @@
-import { env } from "cloudflare:workers";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import type { QuizMode } from "@/src/lib/contracts";
 
-type CacheRow = {
-  payload: string;
-  provider: string;
-  updated_at: number;
-};
+type CacheRow = { payload: unknown; provider: string; updatedAt: number };
+export type QuizAttempt = { mode: QuizMode; countryCode: string | null; score: number; total: number; createdAt: number };
+type RuntimeStore = { cache: Record<string, CacheRow>; attempts: QuizAttempt[] };
 
-let schemaReady: Promise<void> | null = null;
+const storePath = join(process.cwd(), "data", "runtime-store.json");
+let storePromise: Promise<RuntimeStore> | null = null;
+let writeQueue = Promise.resolve();
 
-export function getDatabase() {
-  if (!env.DB) throw new Error("Epoch's D1 binding is unavailable.");
-  return env.DB;
+async function loadStore(): Promise<RuntimeStore> {
+  try {
+    const parsed = JSON.parse(await readFile(storePath, "utf-8")) as Partial<RuntimeStore>;
+    return { cache: parsed.cache ?? {}, attempts: parsed.attempts ?? [] };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    return { cache: {}, attempts: [] };
+  }
 }
 
-export async function ensureDatabase() {
-  if (!schemaReady) {
-    const db = getDatabase();
-    schemaReady = db.batch([
-      db.prepare(`CREATE TABLE IF NOT EXISTS api_cache (
-        cache_key TEXT PRIMARY KEY,
-        provider TEXT NOT NULL,
-        payload TEXT NOT NULL,
-        updated_at INTEGER NOT NULL
-      )`),
-      db.prepare(`CREATE TABLE IF NOT EXISTS quiz_attempts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        mode TEXT NOT NULL,
-        country_code TEXT,
-        score INTEGER NOT NULL,
-        total INTEGER NOT NULL,
-        created_at INTEGER NOT NULL
-      )`),
-      db.prepare("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_created_at ON quiz_attempts(created_at)"),
-      db.prepare("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_mode ON quiz_attempts(mode)"),
-      db.prepare("PRAGMA optimize"),
-    ]).then(() => undefined);
-  }
-  return schemaReady;
+function getStore() {
+  storePromise ??= loadStore();
+  return storePromise;
+}
+
+async function persist(store: RuntimeStore) {
+  writeQueue = writeQueue.then(async () => {
+    await mkdir(dirname(storePath), { recursive: true });
+    const temporary = `${storePath}.${process.pid}.tmp`;
+    await writeFile(temporary, JSON.stringify(store));
+    await rename(temporary, storePath);
+  });
+  await writeQueue;
 }
 
 export async function readCache<T>(key: string, maxAgeMs: number) {
-  await ensureDatabase();
-  const row = await getDatabase()
-    .prepare("SELECT payload, provider, updated_at FROM api_cache WHERE cache_key = ?")
-    .bind(key)
-    .first<CacheRow>();
-
+  const row = (await getStore()).cache[key];
   if (!row) return null;
   return {
-    data: JSON.parse(row.payload) as T,
+    data: row.payload as T,
     provider: row.provider,
-    updatedAt: row.updated_at,
-    fresh: Date.now() - row.updated_at < maxAgeMs,
+    updatedAt: row.updatedAt,
+    fresh: Date.now() - row.updatedAt < maxAgeMs,
   };
 }
 
 export async function writeCache<T>(key: string, provider: string, data: T) {
-  await ensureDatabase();
+  const store = await getStore();
   const updatedAt = Date.now();
-  await getDatabase()
-    .prepare(`INSERT INTO api_cache (cache_key, provider, payload, updated_at)
-      VALUES (?, ?, ?, ?)
-      ON CONFLICT(cache_key) DO UPDATE SET
-        provider = excluded.provider,
-        payload = excluded.payload,
-        updated_at = excluded.updated_at`)
-    .bind(key, provider, JSON.stringify(data), updatedAt)
-    .run();
+  store.cache[key] = { provider, payload: data, updatedAt };
+  await persist(store);
   return updatedAt;
+}
+
+export async function readQuizAttempts() {
+  return [...(await getStore()).attempts];
+}
+
+export async function writeQuizAttempt(attempt: QuizAttempt) {
+  const store = await getStore();
+  store.attempts.push(attempt);
+  store.attempts = store.attempts.slice(-500);
+  await persist(store);
 }

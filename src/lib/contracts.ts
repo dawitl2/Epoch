@@ -91,3 +91,16 @@ export interface ProgressResponse {
   modes: { mode: QuizMode; rounds: number; accuracy: number }[];
   recent: { mode: QuizMode; countryCode: string | null; score: number; total: number; createdAt: number }[];
 }
+
+export interface MapGeography {
+  countries: GeoJSON.FeatureCollection;
+  rivers: GeoJSON.FeatureCollection;
+  lakes: GeoJSON.FeatureCollection;
+  cities: GeoJSON.FeatureCollection;
+  provenance: {
+    provider: string;
+    scale: string;
+    retrievedAt: string;
+    downloads: string[];
+  };
+}

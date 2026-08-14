@@ -3,51 +3,52 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=20.9.0"
   },
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
-    "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && npm run build",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "geography:import": "tsx scripts/import-natural-earth.ts",
+    "geography:verify": "tsx scripts/verify-geography.ts"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.4",
+    "adm-zip": "^0.6.0",
     "drizzle-orm": "^0.45.2",
     "maplibre-gl": "^6.3.0",
+    "next": "^16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "shapefile": "^0.6.6",
     "topojson-client": "^3.1.0",
     "world-atlas": "^2.0.2"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.37.1",
-    "@cloudflare/workers-types": "^4.20260702.1",
     "@eslint/js": "9.39.4",
     "@next/eslint-plugin-next": "16.2.6",
-    "@rolldown/binding-win32-x64-msvc": "^1.2.4",
     "@tailwindcss/postcss": "4.2.1",
+    "@types/adm-zip": "^0.5.8",
     "@types/geojson": "^7946.0.16",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@types/shapefile": "^0.6.4",
     "@types/topojson-client": "^3.1.5",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "0.5.26",
     "drizzle-kit": "^0.31.10",
     "eslint": "9.39.4",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "16.4.0",
-    "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
+    "tsx": "^4.23.12",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.59.3",
-    "vinext": "1.0.0-beta.2",
-    "vite": "8.0.13",
-    "wrangler": "4.92.0"
+    "typescript-eslint": "8.59.3"
   },
   "type": "module"
 }

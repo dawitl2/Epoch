@@ -1,5 +1,6 @@
 import type { ApiMeta, CountryRecord, LeaderRecord } from "@/src/lib/contracts";
 import { readCache, writeCache } from "@/src/server/db";
+import { getNaturalEarthCountries } from "@/src/server/geography";
 
 const WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql";
 const WIKIPEDIA_SUMMARY = "https://en.wikipedia.org/api/rest_v1/page/summary/";
@@ -93,22 +94,8 @@ function normalizeCountries(rows: SparqlRow[]) {
 }
 
 export async function getCountries(): Promise<ProviderResult<CountryRecord[]>> {
-  const key = "wikidata:countries:v3";
-  const cached = await readCache<CountryRecord[]>(key, 7 * 24 * 60 * 60 * 1000);
-  if (cached?.fresh) {
-    return { data: cached.data, meta: { provider: cached.provider, cached: true, updatedAt: cached.updatedAt } };
-  }
-
-  try {
-    const rows = await queryWikidata(COUNTRY_QUERY);
-    const countries = normalizeCountries(rows);
-    if (countries.length < 150) throw new Error("Wikidata returned an incomplete country set.");
-    const updatedAt = await writeCache(key, "Wikidata Query Service", countries);
-    return { data: countries, meta: { provider: "Wikidata Query Service", cached: false, updatedAt } };
-  } catch (error) {
-    if (cached) return { data: cached.data, meta: { provider: cached.provider, cached: true, updatedAt: cached.updatedAt } };
-    throw error;
-  }
+  const countries = await getNaturalEarthCountries();
+  return { data: countries, meta: { provider: "Natural Earth 1:10m", cached: true, updatedAt: Date.now() } };
 }
 
 function leaderQuery(countryCodes: string[]) {

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import { AppProviders } from "@/src/components/AppProviders";
 
 const description =
   "A live, country-level globe for exploring leaders, flags, capitals, states, and world history.";
@@ -34,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body><AppProviders>{children}</AppProviders></body>
     </html>
   );
 }
