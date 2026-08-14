@@ -20,6 +20,12 @@ The application uses the standard Next.js App Router and React with TypeScript. 
 Natural Earth -> import script -> GeoJSON API -> TanStack Query -> MapLibre WebGL globe
 ```
 
+![Africa intelligence focus](/screenshots/c.png)
+
+Country pages keep the map and intelligence profile connected, with the selected state highlighted and its source-backed context alongside it.
+
+![Country intelligence profile](screenshots/geop-country.png)
+
 ## Technology stack
 
 | Layer | Technology | Role in Epoch |
