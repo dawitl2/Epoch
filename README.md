@@ -24,8 +24,6 @@ Natural Earth -> import script -> GeoJSON API -> TanStack Query -> MapLibre WebG
 
 Country pages keep the map and intelligence profile connected, with the selected state highlighted and its source-backed context alongside it.
 
-![Country intelligence profile](screenshots/geop-country.png)
-
 ## Technology stack
 
 | Layer | Technology | Role in Epoch |
