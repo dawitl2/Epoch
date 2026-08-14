@@ -10,11 +10,11 @@
     "build": "vinext build",
     "start": "vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
-    "lucide-react": "^1.31.0",
     "maplibre-gl": "^6.3.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",

@@ -1,14 +1,35 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Epoch — Explore World History",
-  description: "A premium interactive atlas for exploring global history and testing your knowledge.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-};
+const description =
+  "A live, country-level globe for exploring leaders, flags, capitals, states, and world history.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  const baseUrl = new URL(`${protocol}://${host}`);
+  const socialImage = new URL("/og.png", baseUrl).toString();
+
+  return {
+    metadataBase: baseUrl,
+    title: "Epoch — Read the Planet",
+    description,
+    openGraph: {
+      title: "Epoch — Read the Planet",
+      description,
+      type: "website",
+      images: [{ url: socialImage, width: 1536, height: 1024, alt: "Epoch — Read the Planet" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Epoch — Read the Planet",
+      description,
+      images: [socialImage],
+    },
+  };
+}
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -17,4 +38,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-

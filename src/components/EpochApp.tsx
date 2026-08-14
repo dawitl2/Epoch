@@ -38,11 +38,8 @@ export function EpochApp() {
   }, []);
 
   useEffect(() => {
-    if (!selectedCountry) { setLeaders([]); return; }
+    if (!selectedCountry) return;
     const controller = new AbortController();
-    setLeadersLoading(true);
-    setLeadersError(null);
-    setLeaders([]);
     fetch(`/api/leaders?country=${selectedCountry.iso3}`, { signal: controller.signal })
       .then(async (response) => {
         const body = await response.json() as LeadersResponse & { error?: string };
@@ -52,9 +49,18 @@ export function EpochApp() {
       .catch((error) => {
         if (error instanceof Error && error.name !== "AbortError") setLeadersError(error.message);
       })
-      .finally(() => setLeadersLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setLeadersLoading(false);
+      });
     return () => controller.abort();
   }, [selectedCountry]);
+
+  const selectCountry = (country: CountryRecord) => {
+    setLeaders([]);
+    setLeadersError(null);
+    setLeadersLoading(true);
+    setSelectedCountry(country);
+  };
 
   const startQuiz = (mode: QuizMode) => {
     if (!selectedCountry) return;
@@ -92,7 +98,7 @@ export function EpochApp() {
         <main className="atlas-layout">
           <section className="atlas-stage">
             <div className="atlas-stage__title"><p className="micro-label">World view / country level</p><h1>Read the<br />planet.</h1></div>
-            <WorldGlobe countries={countries} selectedCode={selectedCountry?.iso3 ?? null} onCountrySelect={setSelectedCountry} />
+            <WorldGlobe countries={countries} selectedCode={selectedCountry?.iso3 ?? null} onCountrySelect={selectCountry} />
             <div className="atlas-stage__counter"><strong>{selectedCountry ? selectedCountry.iso3 : "000"}</strong><span>{selectedCountry ? selectedCountry.name : "No country selected"}</span></div>
           </section>
           <CountryPanel
@@ -101,7 +107,7 @@ export function EpochApp() {
             leaders={leaders}
             leadersLoading={leadersLoading}
             leadersError={leadersError}
-            onSelectCountry={setSelectedCountry}
+            onSelectCountry={selectCountry}
             onStartQuiz={startQuiz}
           />
         </main>
@@ -124,4 +130,3 @@ export function EpochApp() {
     </div>
   );
 }
-

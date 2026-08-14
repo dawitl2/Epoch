@@ -33,6 +33,7 @@ export async function ensureDatabase() {
       )`),
       db.prepare("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_created_at ON quiz_attempts(created_at)"),
       db.prepare("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_mode ON quiz_attempts(mode)"),
+      db.prepare("PRAGMA optimize"),
     ]).then(() => undefined);
   }
   return schemaReady;
@@ -68,4 +69,3 @@ export async function writeCache<T>(key: string, provider: string, data: T) {
     .run();
   return updatedAt;
 }
-

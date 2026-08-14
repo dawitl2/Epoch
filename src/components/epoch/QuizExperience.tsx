@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { WorldGlobe } from "@/src/components/epoch/WorldGlobe";
 import type { AnswerMode, CountryRecord, LiveQuizQuestion, QuizMode, QuizResponse } from "@/src/lib/contracts";
 
@@ -40,9 +40,10 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
   const question = questions[questionIndex];
   const isCorrect = answered && selectedValue === question?.correctValue;
 
-  useEffect(() => {
-    if (mode === "leaders") setAnswerMode("choices");
-  }, [mode]);
+  const selectMode = (nextMode: QuizMode) => {
+    setMode(nextMode);
+    if (nextMode === "leaders") setAnswerMode("choices");
+  };
 
   const begin = async () => {
     setPhase("loading");
@@ -142,7 +143,7 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
           <fieldset className="setup-block setup-block--modes">
             <legend>01 / Subject</legend>
             {(Object.keys(modeCopy) as QuizMode[]).map((item) => (
-              <button type="button" key={item} className={mode === item ? "is-selected" : ""} onClick={() => setMode(item)}>
+              <button type="button" key={item} className={mode === item ? "is-selected" : ""} onClick={() => selectMode(item)}>
                 <span>{modeCopy[item].number}</span><strong>{modeCopy[item].title}</strong><small>{modeCopy[item].description}</small>
               </button>
             ))}
@@ -235,4 +236,3 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
     </section>
   );
 }
-

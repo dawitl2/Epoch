@@ -121,10 +121,15 @@ export function WorldGlobe({ countries, selectedCode, onCountrySelect, className
           url: "https://tiles.mapterhorn.com/tilejson.json",
           tileSize: 512,
         });
+        map.addSource("epoch-hillshade-source", {
+          type: "raster-dem",
+          url: "https://tiles.mapterhorn.com/tilejson.json",
+          tileSize: 512,
+        });
         map.addLayer({
           id: "epoch-hillshade",
           type: "hillshade",
-          source: "epoch-terrain",
+          source: "epoch-hillshade-source",
           paint: {
             "hillshade-method": "standard",
             "hillshade-shadow-color": "#52615f",
@@ -248,6 +253,10 @@ export function WorldGlobe({ countries, selectedCode, onCountrySelect, className
       </div>
       <div className="world-globe__hud world-globe__hud--bottom">
         <span>Drag to rotate</span><span>Scroll to zoom</span><span>Click a country</span>
+      </div>
+      <div className="world-globe__credits">
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a>
+        <a href="https://openfreemap.org" target="_blank" rel="noreferrer">OpenFreeMap</a>
       </div>
       <span className="world-globe__crosshair" aria-hidden="true" />
     </div>
