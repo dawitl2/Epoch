@@ -1,4 +1,4 @@
-const ALLOWED_HOSTS = ["wikimedia.org", "wikipedia.org"];
+const ALLOWED_HOSTS = ["wikimedia.org", "wikipedia.org", "flagcdn.com"];
 
 function hostAllowed(hostname: string) {
   return ALLOWED_HOSTS.some((host) => hostname === host || hostname.endsWith(`.${host}`));
@@ -34,4 +34,3 @@ export async function GET(request: Request) {
     return Response.json({ error: "Media could not be loaded." }, { status: 502 });
   }
 }
-

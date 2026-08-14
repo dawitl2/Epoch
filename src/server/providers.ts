@@ -15,20 +15,6 @@ type SparqlResponse = { results?: { bindings?: SparqlRow[] } };
 
 type ProviderResult<T> = { data: T; meta: ApiMeta };
 
-const COUNTRY_QUERY = `
-SELECT DISTINCT ?country ?countryLabel ?countryDescription ?iso2 ?iso3 ?numeric ?capitalLabel ?flag ?coord ?continentLabel WHERE {
-  ?country wdt:P297 ?iso2;
-           wdt:P298 ?iso3;
-           wdt:P31/wdt:P279* wd:Q6256.
-  OPTIONAL { ?country wdt:P299 ?numeric. }
-  OPTIONAL { ?country wdt:P36 ?capital. }
-  OPTIONAL { ?country wdt:P41 ?flag. }
-  OPTIONAL { ?country wdt:P625 ?coord. }
-  OPTIONAL { ?country wdt:P30 ?continent. }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 280`;
-
 const GLOBAL_LEADER_COUNTRIES = ["USA", "GBR", "FRA", "DEU", "IND", "CHN", "JPN", "BRA", "ZAF", "EGY", "MEX", "ETH"];
 
 function value(row: SparqlRow, key: string) {
@@ -49,11 +35,6 @@ function secureUrl(url: string) {
   return url ? url.replace(/^http:\/\//, "https://") : "";
 }
 
-function parsePoint(point: string): [number, number] | null {
-  const match = point.match(/Point\((-?[\d.]+) (-?[\d.]+)\)/);
-  return match ? [Number(match[1]), Number(match[2])] : null;
-}
-
 function articleTitle(url: string) {
   if (!url) return null;
   const slug = url.split("/wiki/")[1];
@@ -69,28 +50,6 @@ async function queryWikidata(query: string) {
   if (!response.ok) throw new Error(`Wikidata request failed with ${response.status}.`);
   const body = await response.json() as SparqlResponse;
   return body.results?.bindings ?? [];
-}
-
-function normalizeCountries(rows: SparqlRow[]) {
-  const records = new Map<string, CountryRecord>();
-  for (const row of rows) {
-    const iso3 = value(row, "iso3");
-    const numeric = value(row, "numeric").padStart(3, "0");
-    if (!iso3 || !numeric || records.has(iso3)) continue;
-    records.set(iso3, {
-      id: entityId(value(row, "country")),
-      name: value(row, "countryLabel"),
-      description: value(row, "countryDescription"),
-      iso2: value(row, "iso2"),
-      iso3,
-      numeric,
-      capital: value(row, "capitalLabel") || null,
-      continent: value(row, "continentLabel") || "",
-      flagUrl: secureUrl(value(row, "flag")) || null,
-      center: parsePoint(value(row, "coord")),
-    });
-  }
-  return [...records.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getCountries(): Promise<ProviderResult<CountryRecord[]>> {

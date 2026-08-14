@@ -11,7 +11,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "npm run typecheck && npm run build",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern build --ignore-pattern worker --ignore-pattern vite.config.ts --ignore-pattern worker-configuration.d.ts",
     "db:generate": "drizzle-kit generate",
     "geography:import": "tsx scripts/import-natural-earth.ts",
     "geography:verify": "tsx scripts/verify-geography.ts"

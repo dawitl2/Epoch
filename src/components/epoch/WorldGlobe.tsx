@@ -14,6 +14,10 @@ const HOME_CAMERA = { center: [8, 18] as [number, number], zoom: 1.05, pitch: 0,
 const SELECTED_LAYER = "epoch-country-selected";
 const HOVER_LAYER = "epoch-country-hover";
 
+declare global {
+  interface Window { __epochMap?: MapLibreMap }
+}
+
 const MAP_STYLE: StyleSpecification = {
   version: 8,
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -117,7 +121,7 @@ function addGeographyLayers(map: MapLibreMap, geography: MapGeography) {
   map.addLayer({
     id: "epoch-country-labels", type: "symbol", source: "epoch-country-labels", minzoom: 1.65,
     layout: {
-      "text-field": ["get", "name_en"], "text-font": ["Open Sans Regular"],
+      "text-field": ["get", "name_en"], "text-font": ["Open Sans Semibold"],
       "text-size": ["interpolate", ["linear"], ["zoom"], 1.65, 9, 5, 14],
       "text-transform": "uppercase", "text-letter-spacing": 0.08, "text-allow-overlap": false,
     },
@@ -139,7 +143,7 @@ function addGeographyLayers(map: MapLibreMap, geography: MapGeography) {
     id: "epoch-city-labels", type: "symbol", source: "epoch-cities", minzoom: 4,
     filter: ["any", ["==", ["get", "capital"], true], [">=", ["get", "population"], 1000000]],
     layout: {
-      "text-field": ["get", "name_en"], "text-font": ["Open Sans Regular"], "text-size": 10,
+      "text-field": ["get", "name_en"], "text-font": ["Open Sans Semibold"], "text-size": 10,
       "text-offset": [0, 0.8], "text-anchor": "top", "text-allow-overlap": false,
     },
     paint: { "text-color": "#263846", "text-halo-color": "#f4f0e5", "text-halo-width": 1 },
@@ -167,6 +171,7 @@ export function WorldGlobe({
   const hoveredIdRef = useRef<string | number | null>(null);
   const selectedAlertRef = useRef<string | number | null>(null);
   const [ready, setReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [hovered, setHovered] = useState<CountryRecord | null>(null);
 
   useEffect(() => { countriesRef.current = countries; }, [countries]);
@@ -184,12 +189,15 @@ export function WorldGlobe({
   useEffect(() => {
     if (!containerRef.current || !geography || mapRef.current) return;
     setReady(false);
+    setMapError(null);
+    maplibregl.setWorkerUrl("/maplibre-gl-worker.mjs");
     const map = new maplibregl.Map({
       container: containerRef.current, style: MAP_STYLE, ...HOME_CAMERA, minZoom: 0.55, maxZoom: 8,
       attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false,
       renderWorldCopies: false, cooperativeGestures: false, keyboard: true,
     });
     mapRef.current = map;
+    window.__epochMap = map;
     map.touchZoomRotate.disableRotation();
     map.dragRotate.disable();
     map.getCanvas().setAttribute("aria-label", "Interactive three-dimensional globe. Drag to move around Earth, scroll to zoom, and click a country to select it.");
@@ -207,6 +215,10 @@ export function WorldGlobe({
       map.addSource(MAP_IDS.alertsSource, { type: "geojson", data: alertGeometry(alertsRef.current), cluster: true, clusterMaxZoom: 6, clusterRadius: 44 });
       for (const layer of ALERT_LAYERS) map.addLayer(layer);
       map.once("idle", () => setReady(true));
+    });
+    map.on("error", (event) => {
+      const message = event.error?.message;
+      if (message) setMapError(message);
     });
 
     const countryAtPoint = (event: MapMouseEvent) => {
@@ -262,6 +274,7 @@ export function WorldGlobe({
       observer.disconnect();
       map.remove();
       mapRef.current = null;
+      delete window.__epochMap;
     };
   }, [geography]);
 
@@ -297,9 +310,9 @@ export function WorldGlobe({
     <div className={`world-globe ${className}`}>
       <div ref={containerRef} className="world-globe__map" data-map-ready={ready ? "true" : "false"} />
       <div className={`world-globe__loader ${ready ? "is-hidden" : ""}`} role="status">
-        {!geographyError && <span className="loader-orbit" />}
-        <strong>{geographyError ? "Geography could not load" : "Building the world"}</strong>
-        <small>{geographyError instanceof Error ? geographyError.message : "Natural Earth · borders · rivers · lakes · cities"}</small>
+        {!geographyError && !mapError && <span className="loader-orbit" />}
+        <strong>{geographyError || mapError ? "Geography could not load" : "Building the world"}</strong>
+        <small>{geographyError instanceof Error ? geographyError.message : mapError || "Natural Earth · borders · rivers · lakes · cities"}</small>
       </div>
       <div className="world-globe__hud world-globe__hud--top"><span>3D / LIVE</span><span>{alerts.length} alerts</span></div>
       <div className="world-globe__hud world-globe__hud--bottom"><span>Drag to rotate</span><span>Scroll to zoom</span><span>Click a country</span></div>
