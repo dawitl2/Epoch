@@ -39,4 +39,8 @@ The global view remains readable while highlighting the selected region and its 
 | Client state | Local React state | Selected region, active mode, quiz progress, and results |
 | Mock data | Local TypeScript data files | Regions, historical people, and quiz questions |
 
+<<<<<<< HEAD
 Epoch was created as a hands-on project for learning NestJS, OpenAPI/Swagger, interactive WebGL globe interfaces, region-based navigation, and quiz application architecture in Next.js and React.
+=======
+Epoch was created as a hands-on project for learning NestJS, OpenAPI/Swagger, interactive WebGL globe interfaces, region-based navigation, and quiz application architecture in Next.js and React.
+>>>>>>> 5648a6a67ac04988f39419226d78422ef77cd5e1
