@@ -74,6 +74,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .atlas-stage__counter span { font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 
 .world-globe { position: relative; width: 100%; height: 100%; overflow: hidden; background: #e8e9e3; isolation: isolate; }
+.world-globe:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; }
 .world-globe__map { position: absolute; inset: 0; }
 .world-globe .maplibregl-canvas { outline: none; }
 .world-globe .maplibregl-ctrl-bottom-left { display: none; }
@@ -81,6 +82,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .world-globe .maplibregl-ctrl-group { overflow: hidden; border: 1px solid var(--ink); border-radius: 0; box-shadow: none; background: var(--paper); }
 .world-globe .maplibregl-ctrl-group button { width: 34px; height: 34px; border-bottom-color: var(--line); }
 .world-globe__loader { position: absolute; z-index: 15; inset: 0; display: grid; align-content: center; justify-items: center; gap: 7px; background: var(--bone); transition: opacity 500ms ease, visibility 500ms ease; }
+.world-globe__loader-fallback { display: grid; align-content: center; justify-items: center; gap: 12px; background: var(--bone); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
 .world-globe__loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .world-globe__loader strong { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
 .world-globe__loader small { color: var(--muted); font-size: 9px; }
@@ -94,6 +96,18 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .world-globe__credits { position: absolute; z-index: 8; right: 18px; bottom: 8px; display: flex; gap: 8px; font-size: 7px; letter-spacing: .04em; }
 .world-globe__credits a { color: rgba(17,18,20,.6); text-decoration: none; }
 .world-globe__credits a:hover { color: var(--ink); text-decoration: underline; }
+.globe-controls { position: absolute; z-index: 12; top: 50%; right: 18px; display: grid; overflow: hidden; transform: translateY(-50%); border: 1px solid var(--ink); background: var(--paper); box-shadow: 5px 5px 0 rgba(17,18,20,.1); }
+.globe-controls button { display: grid; width: 38px; height: 38px; padding: 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; place-items: center; font-size: 20px; line-height: 1; cursor: pointer; }
+.globe-controls button:last-child { border-bottom: 0; }
+.globe-controls button:hover { background: var(--blue); color: white; }
+.globe-controls strong { font-size: 11px; letter-spacing: .08em; }
+.globe-tooltip { position: absolute; z-index: 13; top: 0; left: 0; display: grid; grid-template-columns: 38px auto; align-items: center; gap: 9px; min-width: 156px; padding: 7px; border: 1px solid var(--ink); background: rgba(251,250,246,.96); box-shadow: 5px 5px 0 rgba(17,18,20,.14); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 120ms ease; }
+.globe-tooltip.is-visible { opacity: 1; visibility: visible; }
+.globe-tooltip__flag { position: relative; display: grid; width: 38px; height: 26px; overflow: hidden; border: 1px solid var(--line); background: var(--bone); place-items: center; font-size: 9px; font-weight: 800; }
+.globe-tooltip__flag img { object-fit: cover; }
+.globe-tooltip > span:last-child { display: grid; gap: 2px; }
+.globe-tooltip strong { font-size: 11px; line-height: 1.1; }
+.globe-tooltip small { color: var(--muted); font-size: 7px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .world-globe__crosshair { position: absolute; z-index: 6; top: 50%; left: 50%; width: 15px; height: 15px; transform: translate(-50%,-50%); border: 1px solid rgba(17,18,20,.45); border-radius: 50%; pointer-events: none; }
 .world-globe__crosshair::before, .world-globe__crosshair::after { content: ""; position: absolute; background: rgba(17,18,20,.45); }
 .world-globe__crosshair::before { top: 6px; left: -8px; width: 29px; height: 1px; }
@@ -135,6 +149,38 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .country-facts div:nth-child(even) { padding-left: 14px; }
 .country-facts dt { color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .country-facts dd { margin: 0; font-size: 13px; font-weight: 700; }
+.quick-quiz { margin: 0 0 37px; padding: 17px; border: 1px solid var(--ink); background: var(--paper); }
+.quick-quiz > p { margin: 0 0 13px; color: var(--muted); font-family: var(--serif); font-size: 12px; }
+.quick-quiz__options { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.quick-quiz__options button { display: flex; align-items: center; gap: 9px; min-height: 45px; padding: 8px 10px; border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; text-align: left; }
+.quick-quiz__options button:hover:not(:disabled) { background: var(--blue); color: white; }
+.quick-quiz__options button:disabled { color: var(--muted); cursor: default; }
+.quick-quiz__options button.is-correct { background: #dcece5; color: #0e5c40; }
+.quick-quiz__options button.is-wrong { background: #f5dfda; color: #76271d; }
+.quick-quiz__options span { color: var(--blue); font-size: 8px; }
+.quick-quiz__feedback { margin: 11px 0 0 !important; font-family: var(--sans) !important; font-size: 10px !important; font-weight: 800; }
+.quick-quiz__feedback.is-correct { color: var(--green); }
+.quick-quiz__feedback.is-wrong { color: var(--red); }
+.alert-index { margin-top: 28px; }
+.alert-index button { display: grid; grid-template-columns: 54px 1fr auto; align-items: center; gap: 9px; width: 100%; min-height: 52px; padding: 7px 4px; border: 0; border-bottom: 1px solid var(--line); background: transparent; cursor: pointer; text-align: left; }
+.alert-index button:hover { background: var(--paper); }
+.alert-index button strong { color: var(--orange); font-size: 12px; }
+.alert-index button span { overflow: hidden; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.alert-index button small { color: var(--muted); font-size: 8px; }
+.atlas-alert-status { position: absolute; z-index: 9; top: 25px; right: 25px; padding: 7px 9px; border: 1px solid var(--ink); background: var(--paper); color: var(--red); font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.alert-panel { padding: 28px 25px 70px; }
+.alert-panel__header { padding-bottom: 26px; border-bottom: 1px solid var(--ink); }
+.alert-panel__header .plain-back { margin-bottom: 54px; }
+.alert-panel__header .micro-label { margin-bottom: 13px; }
+.alert-panel__header h1 { margin: 13px 0 0; font-size: clamp(42px, 4vw, 61px); font-weight: 800; letter-spacing: -.07em; line-height: .88; }
+.alert-magnitude { display: flex; align-items: baseline; gap: 6px; color: var(--orange); }
+.alert-magnitude span { font-size: 15px; font-weight: 900; }
+.alert-magnitude strong { font-size: 86px; letter-spacing: -.08em; line-height: .8; }
+.alert-panel__body { padding-top: 25px; }
+.alert-panel__detail { margin: 0 0 25px; font-family: var(--serif); font-size: 15px; line-height: 1.58; }
+.alert-panel__coordinates { margin: 32px 0; color: transparent; font-size: 45px; font-weight: 900; letter-spacing: -.07em; line-height: .9; -webkit-text-stroke: 1px var(--line); }
+.alert-source-link { display: grid; text-decoration: none; place-items: center; }
+.alert-disclaimer { margin-top: 18px; color: var(--muted); font-size: 9px; line-height: 1.5; }
 .section-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 13px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
 .section-heading h2 { margin: 4px 0 0; font-size: 25px; font-weight: 800; letter-spacing: -.05em; }
 .section-heading > span { color: var(--muted); font-size: 8px; letter-spacing: .06em; text-transform: uppercase; }
@@ -318,6 +364,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .atlas-stage__counter { right: 74px; bottom: 20px; }
   .world-globe__hud--top { top: 18px; right: 17px; }
   .world-globe__hud--bottom { bottom: 20px; left: 17px; }
+  .globe-controls { right: 13px; }
+  .globe-controls button { width: 36px; height: 36px; }
+  .globe-tooltip { display: none; }
+  .alert-panel { padding: 25px 18px 90px; }
+  .alert-panel__header .plain-back { margin-bottom: 35px; }
   .country-panel { min-height: auto; }
   .country-search { top: 58px; padding-inline: 17px; }
   .country-panel__empty { min-height: 520px; padding: 30px 18px; }
@@ -348,6 +399,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .world-globe__hud--top span:first-child, .world-globe__hud--bottom span:nth-child(2) { display: none; }
   .world-globe__hud span + span::before { display: none; }
   .world-globe__hud--bottom { gap: 8px; }
+  .world-globe__credits { display: none; }
+  .quick-quiz { padding: 13px; }
+  .quick-quiz__options { grid-template-columns: 1fr; }
+  .alert-panel__coordinates { font-size: 34px; }
   .country-title { grid-template-columns: 78px 1fr; }
   .country-title__flag { width: 78px; height: 54px; }
   .country-title h1 { font-size: 42px; }

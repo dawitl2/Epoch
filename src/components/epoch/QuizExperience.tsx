@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { WorldGlobe } from "@/src/components/epoch/WorldGlobe";
-import type { AnswerMode, CountryRecord, LiveQuizQuestion, QuizMode, QuizResponse } from "@/src/lib/contracts";
+import { LazyWorldGlobe } from "@/src/components/epoch/LazyWorldGlobe";
+import type { AnswerMode, CountryRecord, LiveQuizQuestion, QuizMode } from "@/src/lib/contracts";
+import { fetchQuiz } from "@/src/services/epochApi";
 
 const modeCopy: Record<QuizMode, { number: string; title: string; description: string }> = {
   flags: { number: "01", title: "Flags", description: "Read a live flag image, then name or locate its country." },
@@ -49,9 +50,7 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
     setPhase("loading");
     setError(null);
     try {
-      const response = await fetch(`/api/quiz?country=${country.iso3}&mode=${mode}&count=${count}&answerMode=${answerMode}`);
-      const body = await response.json() as QuizResponse & { error?: string };
-      if (!response.ok) throw new Error(body.error || "The live quiz could not be prepared.");
+      const body = await fetchQuiz({ countryCode: country.iso3, mode, count, answerMode });
       setQuestions(body.questions);
       setQuestionIndex(0);
       setScore(0);
@@ -186,7 +185,7 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
 
       {globeMode ? (
         <div className="globe-answer-stage">
-          <WorldGlobe
+          <LazyWorldGlobe
             countries={countries}
             selectedCode={answered ? question.correctCountryCode : null}
             onCountrySelect={answerOnGlobe}

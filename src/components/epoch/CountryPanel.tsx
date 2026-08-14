@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import type { CountryRecord, LeaderRecord, QuizMode } from "@/src/lib/contracts";
+import { CountryQuickQuiz } from "@/src/components/epoch/CountryQuickQuiz";
+import type { CountryRecord, GeographyAlert, LeaderRecord, QuizMode } from "@/src/lib/contracts";
 
 const modes: { id: QuizMode; title: string; label: string; detail: string }[] = [
   { id: "flags", title: "Flags", label: "Visual identity", detail: "Read national flags, then answer by choice or on the globe." },
@@ -22,11 +23,13 @@ type Props = {
   leaders: LeaderRecord[];
   leadersLoading: boolean;
   leadersError: string | null;
+  alerts: GeographyAlert[];
+  onSelectAlert: (alert: GeographyAlert) => void;
   onSelectCountry: (country: CountryRecord) => void;
   onStartQuiz: (mode: QuizMode) => void;
 };
 
-export function CountryPanel({ countries, selectedCountry, leaders, leadersLoading, leadersError, onSelectCountry, onStartQuiz }: Props) {
+export function CountryPanel({ countries, selectedCountry, leaders, leadersLoading, leadersError, alerts, onSelectAlert, onSelectCountry, onStartQuiz }: Props) {
   const [query, setQuery] = useState("");
   const matches = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -68,6 +71,16 @@ export function CountryPanel({ countries, selectedCountry, leaders, leadersLoadi
             <p>No regions and no guided path. Select the geography itself, then move directly into flags, capitals, leaders, and states.</p>
           </div>
           <div className="empty-instruction"><span>01</span><p>Rotate the globe</p><span>02</span><p>Click a border</p><span>03</span><p>Open its archive</p></div>
+          {alerts.length > 0 && (
+            <section className="alert-index" aria-label="Live geography alerts">
+              <div className="section-heading"><div><p className="micro-label">Live USGS feed</p><h2>Latest alerts</h2></div><span>{alerts.length} today</span></div>
+              {alerts.slice(0, 3).map((alert) => (
+                <button type="button" key={alert.id} onClick={() => onSelectAlert(alert)}>
+                  <strong>M {alert.magnitude.toFixed(1)}</strong><span>{alert.place}</span><small>Focus ↗</small>
+                </button>
+              ))}
+            </section>
+          )}
         </div>
       ) : (
         <div className="country-panel__content panel-swap" key={selectedCountry.iso3}>
@@ -88,6 +101,8 @@ export function CountryPanel({ countries, selectedCountry, leaders, leadersLoadi
             <div><dt>ISO</dt><dd>{selectedCountry.iso2} / {selectedCountry.iso3}</dd></div>
             <div><dt>Map ID</dt><dd>{selectedCountry.numeric}</dd></div>
           </dl>
+
+          <CountryQuickQuiz key={selectedCountry.iso3} country={selectedCountry} countries={countries} />
 
           <section className="live-leaders">
             <div className="section-heading"><div><p className="micro-label">Live archive</p><h2>Leaders</h2></div><span>Wikidata + Wikipedia</span></div>
@@ -123,4 +138,3 @@ export function CountryPanel({ countries, selectedCountry, leaders, leadersLoadi
     </aside>
   );
 }
-

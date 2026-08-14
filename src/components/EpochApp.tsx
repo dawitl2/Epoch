@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { CountryPanel } from "@/src/components/epoch/CountryPanel";
+import { AlertPanel } from "@/src/components/epoch/AlertPanel";
 import { ProgressView } from "@/src/components/epoch/ProgressView";
 import { QuizExperience } from "@/src/components/epoch/QuizExperience";
-import { WorldGlobe } from "@/src/components/epoch/WorldGlobe";
-import type { CountriesResponse, CountryRecord, LeaderRecord, LeadersResponse, QuizMode } from "@/src/lib/contracts";
+import { LazyWorldGlobe } from "@/src/components/epoch/LazyWorldGlobe";
+import { useGeographyAlerts } from "@/src/hooks/useGeographyAlerts";
+import type { CountryRecord, GeographyAlert, LeaderRecord, QuizMode } from "@/src/lib/contracts";
+import { fetchCountries, fetchLeaders } from "@/src/services/epochApi";
 
 type View = "atlas" | "quiz" | "progress";
 
@@ -15,18 +18,18 @@ export function EpochApp() {
   const [countriesLoading, setCountriesLoading] = useState(true);
   const [countriesError, setCountriesError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<CountryRecord | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<GeographyAlert | null>(null);
   const [leaders, setLeaders] = useState<LeaderRecord[]>([]);
   const [leadersLoading, setLeadersLoading] = useState(false);
   const [leadersError, setLeadersError] = useState<string | null>(null);
   const [quizMode, setQuizMode] = useState<QuizMode>("countries");
   const [provider, setProvider] = useState("Connecting to Wikidata");
+  const { alerts, error: alertsError } = useGeographyAlerts();
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/countries", { signal: controller.signal })
-      .then(async (response) => {
-        const body = await response.json() as CountriesResponse & { error?: string };
-        if (!response.ok) throw new Error(body.error || "The live country archive is unavailable.");
+    fetchCountries(controller.signal)
+      .then((body) => {
         setCountries(body.countries);
         setProvider(body.meta.provider);
       })
@@ -40,10 +43,8 @@ export function EpochApp() {
   useEffect(() => {
     if (!selectedCountry) return;
     const controller = new AbortController();
-    fetch(`/api/leaders?country=${selectedCountry.iso3}`, { signal: controller.signal })
-      .then(async (response) => {
-        const body = await response.json() as LeadersResponse & { error?: string };
-        if (!response.ok) throw new Error(body.error || "The live leader archive is unavailable.");
+    fetchLeaders(selectedCountry.iso3, controller.signal)
+      .then((body) => {
         setLeaders(body.leaders);
       })
       .catch((error) => {
@@ -56,6 +57,7 @@ export function EpochApp() {
   }, [selectedCountry]);
 
   const selectCountry = (country: CountryRecord) => {
+    setSelectedAlert(null);
     setLeaders([]);
     setLeadersError(null);
     setLeadersLoading(true);
@@ -98,18 +100,32 @@ export function EpochApp() {
         <main className="atlas-layout">
           <section className="atlas-stage">
             <div className="atlas-stage__title"><p className="micro-label">World view / country level</p><h1>Read the<br />planet.</h1></div>
-            <WorldGlobe countries={countries} selectedCode={selectedCountry?.iso3 ?? null} onCountrySelect={selectCountry} />
+            <LazyWorldGlobe
+              countries={countries}
+              alerts={alerts}
+              selectedCode={selectedCountry?.iso3 ?? null}
+              selectedAlertId={selectedAlert?.id ?? null}
+              onCountrySelect={selectCountry}
+              onAlertSelect={setSelectedAlert}
+            />
             <div className="atlas-stage__counter"><strong>{selectedCountry ? selectedCountry.iso3 : "000"}</strong><span>{selectedCountry ? selectedCountry.name : "No country selected"}</span></div>
+            {alertsError && <div className="atlas-alert-status">Alert feed delayed</div>}
           </section>
-          <CountryPanel
-            countries={countries}
-            selectedCountry={selectedCountry}
-            leaders={leaders}
-            leadersLoading={leadersLoading}
-            leadersError={leadersError}
-            onSelectCountry={selectCountry}
-            onStartQuiz={startQuiz}
-          />
+          {selectedAlert ? (
+            <AlertPanel alert={selectedAlert} onClose={() => setSelectedAlert(null)} />
+          ) : (
+            <CountryPanel
+              countries={countries}
+              selectedCountry={selectedCountry}
+              leaders={leaders}
+              leadersLoading={leadersLoading}
+              leadersError={leadersError}
+              alerts={alerts}
+              onSelectAlert={setSelectedAlert}
+              onSelectCountry={selectCountry}
+              onStartQuiz={startQuiz}
+            />
+          )}
         </main>
       )}
 

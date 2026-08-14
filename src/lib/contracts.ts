@@ -44,6 +44,25 @@ export interface LeadersResponse {
   meta: ApiMeta;
 }
 
+export interface GeographyAlert {
+  id: string;
+  title: string;
+  place: string;
+  magnitude: number;
+  significance: number;
+  longitude: number;
+  latitude: number;
+  depthKm: number;
+  occurredAt: number;
+  detail: string;
+  sourceUrl: string;
+}
+
+export interface AlertsResponse {
+  alerts: GeographyAlert[];
+  meta: ApiMeta;
+}
+
 export interface LiveQuizQuestion {
   id: string;
   mode: QuizMode;
@@ -72,4 +91,3 @@ export interface ProgressResponse {
   modes: { mode: QuizMode; rounds: number; accuracy: number }[];
   recent: { mode: QuizMode; countryCode: string | null; score: number; total: number; createdAt: number }[];
 }
-
