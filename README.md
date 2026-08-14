@@ -39,22 +39,4 @@ The global view remains readable while highlighting the selected region and its 
 | Client state | Local React state | Selected region, active mode, quiz progress, and results |
 | Mock data | Local TypeScript data files | Regions, historical people, and quiz questions |
 
-## Run locally
-
-```bash
-pnpm install
-pnpm dev
-```
-
-The web app runs at `http://localhost:3000`.
-
-## Verification
-
-```bash
-pnpm typecheck
-pnpm build
-```
-
-This phase uses local mock data only; no backend, database, or external history API is connected yet.
-
-Epoch was created as a hands-on project for learning interactive WebGL globe interfaces, region-based navigation, and quiz application architecture in Next.js and React.
+Epoch was created as a hands-on project for learning NestJS, OpenAPI/Swagger, interactive WebGL globe interfaces, region-based navigation, and quiz application architecture in Next.js and React.
