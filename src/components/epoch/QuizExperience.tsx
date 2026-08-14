@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { LazyWorldGlobe } from "@/src/components/epoch/LazyWorldGlobe";
+import { WorldGlobe } from "@/src/components/epoch/WorldGlobe";
 import type { AnswerMode, CountryRecord, LiveQuizQuestion, QuizMode } from "@/src/lib/contracts";
 import { fetchQuiz } from "@/src/services/epochApi";
 
@@ -185,7 +185,7 @@ export function QuizExperience({ countries, country, initialMode, onBack, onShow
 
       {globeMode ? (
         <div className="globe-answer-stage">
-          <LazyWorldGlobe
+          <WorldGlobe
             countries={countries}
             selectedCode={answered ? question.correctCountryCode : null}
             onCountrySelect={answerOnGlobe}

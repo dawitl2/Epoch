@@ -5,7 +5,7 @@ import { CountryPanel } from "@/src/components/epoch/CountryPanel";
 import { AlertPanel } from "@/src/components/epoch/AlertPanel";
 import { ProgressView } from "@/src/components/epoch/ProgressView";
 import { QuizExperience } from "@/src/components/epoch/QuizExperience";
-import { LazyWorldGlobe } from "@/src/components/epoch/LazyWorldGlobe";
+import { WorldGlobe } from "@/src/components/epoch/WorldGlobe";
 import { useGeographyAlerts } from "@/src/hooks/useGeographyAlerts";
 import type { CountryRecord, GeographyAlert, LeaderRecord, QuizMode } from "@/src/lib/contracts";
 import { fetchCountries, fetchLeaders } from "@/src/services/epochApi";
@@ -100,7 +100,7 @@ export function EpochApp() {
         <main className="atlas-layout">
           <section className="atlas-stage">
             <div className="atlas-stage__title"><p className="micro-label">World view / country level</p><h1>Read the<br />planet.</h1></div>
-            <LazyWorldGlobe
+            <WorldGlobe
               countries={countries}
               alerts={alerts}
               selectedCode={selectedCountry?.iso3 ?? null}

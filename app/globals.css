@@ -82,7 +82,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .world-globe .maplibregl-ctrl-group { overflow: hidden; border: 1px solid var(--ink); border-radius: 0; box-shadow: none; background: var(--paper); }
 .world-globe .maplibregl-ctrl-group button { width: 34px; height: 34px; border-bottom-color: var(--line); }
 .world-globe__loader { position: absolute; z-index: 15; inset: 0; display: grid; align-content: center; justify-items: center; gap: 7px; background: var(--bone); transition: opacity 500ms ease, visibility 500ms ease; }
-.world-globe__loader-fallback { display: grid; align-content: center; justify-items: center; gap: 12px; background: var(--bone); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
 .world-globe__loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .world-globe__loader strong { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
 .world-globe__loader small { color: var(--muted); font-size: 9px; }

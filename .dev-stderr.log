@@ -15,3 +15,73 @@ Detected multiple renderers concurrently rendering the same context provider. Th
 Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
 Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
 Detected multiple renderers concurrently rendering the same context provider. This is currently unsupported.
+[2m12:07:37[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mInvalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+[2m12:07:37[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mInvalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+[2m12:07:37[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mTypeError: Cannot read properties of null (reading 'useState')
+    at exports.useState (http://localhost:3000/node_modules/.vite/deps/react.js?v=1d579749:748:30)
+    at ClientSSRFalse (http://localhost:3000/node_modules/.vite/deps/next_dynamic.js?v=2c1c4aa0:235:47)
+    at Object.react_stack_bottom_frame (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:12868:12)
+    at renderWithHooks (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:4213:19)
+    at updateFunctionComponent (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:5569:16)
+    at beginWork (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:6140:20)
+    at runWithFiberInDEV (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:851:66)
+    at performUnitOfWork (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:8429:92)
+    at workLoopSync (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:8325:37)
+    at renderRootSync (http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=7ec48e92:8309:6)
+[2m12:07:37[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mThe above error occurred in a React component:
+
+    at ClientSSRFalse (http://localhost:3000/node_modules/.vite/deps/next_dynamic.js?v=2c1c4aa0:235:47)
+    at LazyWorldGlobe (<anonymous>)
+    at section (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at EpochApp (http://localhost:3000/src/components/EpochApp.tsx?t=1786698228160:15:26)
+    at PageInvoker [Server] (<anonymous>)
+    at AwaitAppRenderDependencies [Server] (<anonymous>)
+    at BfcacheSlotBoundary (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:140:32)
+    at Slot (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:190:17)
+    at LayoutSegmentProvider (http://localhost:3000/node_modules/vinext/dist/shims/layout-segment-context.js?v=7ad8542a:41:34)
+    at RedirectErrorBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:63:3)
+    at RedirectBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:97:29)
+    at AppRouterScrollTargetInner (http://localhost:3000/node_modules/vinext/dist/shims/app-router-scroll.js?v=7ad8542a:83:34)
+    at AppRouterScrollTarget (http://localhost:3000/node_modules/vinext/dist/shims/app-router-scroll.js?v=7ad8542a:135:34)
+    at Children (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:221:17)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+    at default (about://React/Server/C:/Users/enkud/Desktop/Projects/Epoch/app/layout.tsx?1:67:26)
+    at default (about://React/Server/C:/Users/enkud/Desktop/Projects/Epoch/app/layout.tsx?1:67:26)
+    at BfcacheSlotBoundary (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:140:32)
+    at Slot (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:190:17)
+    at LayoutSegmentProvider (http://localhost:3000/node_modules/vinext/dist/shims/layout-segment-context.js?v=7ad8542a:41:34)
+    at ErrorBoundaryInner (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:107:3)
+    at ErrorBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:159:26)
+    at ErrorBoundaryInner (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:107:3)
+    at GlobalErrorBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:167:32)
+    at BfcacheSlotBoundary (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:140:32)
+    at Slot (http://localhost:3000/node_modules/vinext/dist/shims/slot.js?v=7ad8542a:190:17)
+    at NavigationCommitSignal (http://localhost:3000/node_modules/vinext/dist/server/app-browser-navigation-controller.js?v=7ad8542a:232:36)
+    at RedirectErrorBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:63:3)
+    at RedirectBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:97:29)
+    at AppRouterRedirectBridge (http://localhost:3000/node_modules/vinext/dist/server/app-browser-entry.js?v=7ad8542a:475:36)
+    at DevRecoveryBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:313:3)
+    at AppRouterScrollCommitProvider (http://localhost:3000/node_modules/vinext/dist/shims/app-router-scroll.js?v=7ad8542a:129:42)
+    at ErrorBoundaryInner (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:107:3)
+    at GlobalErrorBoundary (http://localhost:3000/node_modules/vinext/dist/shims/error-boundary.js?v=7ad8542a:167:32)
+    at BrowserRoot (http://localhost:3000/node_modules/vinext/dist/server/app-browser-entry.js?v=7ad8542a:501:24)
+[2m12:07:40[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mcalculateFogMatrix is not supported on globe projection.
+[2m12:07:41[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0031 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:07:41[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0032 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:07:41[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0033 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:07:41[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0036 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:08:00[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0030 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:08:00[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0035 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
+[2m12:08:00[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mUnable to load glyph range 0, 0-255. Rendering codepoint U+0034 locally instead. Error: AJAXError:  (404): https://tiles.openfreemap.org/fonts/Open Sans Regular,Arial Unicode MS Regular/0-255.pbf
