@@ -132,6 +132,24 @@ ORDER BY DESC(?sitelinks)
 LIMIT 80`;
 }
 
+function globalLeaderQuery() {
+  const values = GLOBAL_LEADER_COUNTRIES.slice(0, 6).map((code) => `"${code}"`).join(" ");
+  return `
+SELECT DISTINCT ?iso3 ?person ?personLabel ?personDescription ?image ?sitelinks WHERE {
+  VALUES ?iso3 { ${values} }
+  ?country wdt:P298 ?iso3.
+  ?person wdt:P31 wd:Q5;
+          wdt:P27 ?country;
+          wdt:P18 ?image;
+          wdt:P39 ?position;
+          wikibase:sitelinks ?sitelinks.
+  FILTER(?sitelinks > 120)
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY DESC(?sitelinks)
+LIMIT 36`;
+}
+
 function normalizeLeaders(rows: SparqlRow[]) {
   const records = new Map<string, LeaderRecord>();
   for (const row of rows) {
@@ -162,6 +180,21 @@ async function getLeaderSet(key: string, codes: string[], maxAgeMs: number) {
     const rows = await queryWikidata(leaderQuery(codes));
     const leaders = normalizeLeaders(rows);
     if (!leaders.length) throw new Error("No leaders were returned by Wikidata.");
+    const updatedAt = await writeCache(key, "Wikidata Query Service", leaders);
+    return { leaders, cached: false, updatedAt };
+  } catch (error) {
+    if (cached) return { leaders: cached.data, cached: true, updatedAt: cached.updatedAt };
+    throw error;
+  }
+}
+
+async function getGlobalLeaderSet() {
+  const key = "wikidata:leaders:global:v4";
+  const cached = await readCache<LeaderRecord[]>(key, 7 * 24 * 60 * 60 * 1000);
+  if (cached?.fresh) return { leaders: cached.data, cached: true, updatedAt: cached.updatedAt };
+  try {
+    const leaders = normalizeLeaders(await queryWikidata(globalLeaderQuery()));
+    if (leaders.length < 4) throw new Error("The global leader pool is incomplete.");
     const updatedAt = await writeCache(key, "Wikidata Query Service", leaders);
     return { leaders, cached: false, updatedAt };
   } catch (error) {
@@ -214,19 +247,25 @@ export async function getLeaders(countryCode: string) {
 
   const selectedSet = await getLeaderSet(`wikidata:leaders:${code}:v3`, [code], 3 * 24 * 60 * 60 * 1000)
     .catch(() => ({ leaders: [] as LeaderRecord[], cached: false, updatedAt: Date.now() }));
-  const globalSet = await getLeaderSet("wikidata:leaders:global:v3", GLOBAL_LEADER_COUNTRIES, 7 * 24 * 60 * 60 * 1000);
-  const selected = selectedSet.leaders.filter((leader) => leader.countryCode === code).slice(0, 10);
+  const selected = selectedSet.leaders.filter((leader) => leader.countryCode === code);
   const leaders = await Promise.all(selected.slice(0, 8).map(enrichLeader));
-  const relatedLeaders = globalSet.leaders.filter((leader) => !leaders.some((item) => item.id === leader.id)).slice(0, 30);
+  let relatedLeaders = selected.slice(8, 30);
+  let globalCached = true;
+  let globalUpdatedAt = selectedSet.updatedAt;
+  if (leaders.length + relatedLeaders.length < 4) {
+    const globalSet = await getGlobalLeaderSet();
+    globalCached = globalSet.cached;
+    globalUpdatedAt = globalSet.updatedAt;
+    relatedLeaders = globalSet.leaders.filter((leader) => !leaders.some((item) => item.id === leader.id)).slice(0, 30);
+  }
 
   return {
     leaders,
     relatedLeaders,
     meta: {
       provider: "Wikidata + Wikimedia REST API",
-      cached: selectedSet.cached && globalSet.cached,
-      updatedAt: Math.max(selectedSet.updatedAt, globalSet.updatedAt),
+      cached: selectedSet.cached && globalCached,
+      updatedAt: Math.max(selectedSet.updatedAt, globalUpdatedAt),
     } satisfies ApiMeta,
   };
 }
-

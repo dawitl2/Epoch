@@ -1,0 +1,2 @@
+[2m11:17:16[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mYou are using the same source for a hillshade layer and for 3D terrain. Please consider using two separate sources to improve rendering quality.
+[2m11:17:17[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mcalculateFogMatrix is not supported on globe projection.

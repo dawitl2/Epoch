@@ -38,7 +38,7 @@ function countryGeometry() {
 function safePaint(map: MapLibreMap, layer: string, property: string, value: unknown) {
   if (!map.getLayer(layer)) return;
   try {
-    map.setPaintProperty(layer, property, value);
+    map.setPaintProperty(layer, property as never, value as never);
   } catch {
     // The upstream basemap may change a layer type; nonessential styling can be skipped.
   }
@@ -253,4 +253,3 @@ export function WorldGlobe({ countries, selectedCode, onCountrySelect, className
     </div>
   );
 }
-
